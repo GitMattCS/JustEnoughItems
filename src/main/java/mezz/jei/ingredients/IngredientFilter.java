@@ -32,6 +32,7 @@ import mezz.jei.events.PlayerJoinedWorldEvent;
 import mezz.jei.gui.ingredients.IIngredientListElement;
 import mezz.jei.gui.ingredients.IIngredientListElementInfo;
 import mezz.jei.gui.overlay.IIngredientGridSource;
+import mezz.jei.recipes.RecipeManager;
 import mezz.jei.suffixtree.CombinedSearchTrees;
 import mezz.jei.suffixtree.GeneralizedSuffixTree;
 import mezz.jei.suffixtree.ISearchTree;
@@ -47,6 +48,7 @@ public class IngredientFilter implements IIngredientGridSource {
 	private final IngredientBlacklistInternal blacklist;
 	private final IEditModeConfig editModeConfig;
 	private final IIngredientManager ingredientManager;
+
 	/**
 	 * indexed list of ingredients for use with the suffix trees
 	 * includes all elements (even hidden ones) for use when rebuilding
@@ -56,6 +58,7 @@ public class IngredientFilter implements IIngredientGridSource {
 	private final Char2ObjectMap<PrefixedSearchTree> prefixedSearchTrees = new Char2ObjectOpenHashMap<>();
 	private final IngredientFilterBackgroundBuilder backgroundBuilder;
 	private CombinedSearchTrees combinedSearchTrees;
+	private RecipeManager recipeManager;
 
 	@Nullable
 	private String filterCached;
@@ -80,6 +83,7 @@ public class IngredientFilter implements IIngredientGridSource {
 		createPrefixedSearchTree('%', config::getCreativeTabSearchMode, IIngredientListElementInfo::getCreativeTabsStrings);
 		createPrefixedSearchTree('^', config::getColorSearchMode, IIngredientListElementInfo::getColorStrings);
 		createPrefixedSearchTree('&', config::getResourceIdSearchMode, element -> Collections.singleton(element.getResourceId()));
+		createPrefixedSearchTree('=', config::getCraftableSearchMode, IIngredientListElementInfo::getTagStrings);
 
 		this.combinedSearchTrees = buildCombinedSearchTrees(this.searchTree, this.prefixedSearchTrees.values());
 		this.backgroundBuilder = new IngredientFilterBackgroundBuilder(prefixedSearchTrees, elementList, ingredientManager, modIdHelper);
@@ -93,6 +97,10 @@ public class IngredientFilter implements IIngredientGridSource {
 			this.filterCached = null;
 			updateHidden();
 		});
+	}
+
+	public void setRecipeManager(RecipeManager recipeManager) {
+		this.recipeManager = recipeManager;
 	}
 
 	private static CombinedSearchTrees buildCombinedSearchTrees(ISearchTree searchTree, Collection<PrefixedSearchTree> prefixedSearchTrees) {
@@ -138,7 +146,13 @@ public class IngredientFilter implements IIngredientGridSource {
 		for (PrefixedSearchTree prefixedSearchTree : this.prefixedSearchTrees.values()) {
 			SearchMode searchMode = prefixedSearchTree.getMode();
 			if (searchMode != SearchMode.DISABLED) {
-				Collection<String> strings = prefixedSearchTree.getStringsGetter().getStrings(info);
+				Collection<String> strings;
+				if (prefixedSearchTrees.get('=') == prefixedSearchTree) {
+					strings = info.getCraftableString(recipeManager);
+				}
+				else {
+					strings = prefixedSearchTree.getStringsGetter().getStrings(info);
+				}
 				for (String string : strings) {
 					prefixedSearchTree.getTree().put(string, index);
 				}

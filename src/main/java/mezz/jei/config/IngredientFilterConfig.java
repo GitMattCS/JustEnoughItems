@@ -42,6 +42,11 @@ public class IngredientFilterConfig implements IIngredientFilterConfig {
 	}
 
 	@Override
+	public SearchMode getCraftableSearchMode() {
+		return values.craftableSearchMode;
+	}
+
+	@Override
 	public boolean getSearchAdvancedTooltips() {
 		return values.searchAdvancedTooltips;
 	}
@@ -59,6 +64,7 @@ public class IngredientFilterConfig implements IIngredientFilterConfig {
 		values.creativeTabSearchMode = config.getEnum("creativeTabSearchMode", CATEGORY_SEARCH, defaultValues.creativeTabSearchMode, searchModes);
 		values.colorSearchMode = config.getEnum("colorSearchMode", CATEGORY_SEARCH, defaultValues.colorSearchMode, searchModes);
 		values.resourceIdSearchMode = config.getEnum("resourceIdSearchMode", CATEGORY_SEARCH, defaultValues.resourceIdSearchMode, searchModes);
+		values.craftableSearchMode = config.getEnum("craftableSearchMode", CATEGORY_SEARCH, defaultValues.resourceIdSearchMode, searchModes);
 		if (config.getCategory(CATEGORY_SEARCH).hasChanged()) {
 			needsReload = true;
 		}

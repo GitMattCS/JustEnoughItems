@@ -154,6 +154,7 @@ public class PluginLoader {
 			timer.stop();
 			timer.start("Building ingredient filter");
 			ingredientFilter = new IngredientFilter(blacklist, ingredientFilterConfig, editModeConfig, ingredientManager, modIdHelper);
+			//ingredientFilter.setRecipeManager(getRecipeManager());
 			ingredientFilter.addIngredients(ingredientList, ingredientManager, modIdHelper);
 			Internal.setIngredientFilter(ingredientFilter);
 			timer.stop();

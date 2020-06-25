@@ -7,6 +7,7 @@ import java.util.Set;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.config.IIngredientFilterConfig;
+import mezz.jei.recipes.RecipeManager;
 
 public interface IIngredientListElementInfo<V> {
 	IIngredientHelper<V> getIngredientHelper();
@@ -20,6 +21,8 @@ public interface IIngredientListElementInfo<V> {
 	Set<String> getModNameStrings();
 
 	List<String> getTooltipStrings(IIngredientFilterConfig config);
+
+	List<String> getCraftableString(RecipeManager recipeManager);
 
 	Collection<String> getTagStrings();
 

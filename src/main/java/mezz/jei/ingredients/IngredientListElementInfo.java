@@ -10,17 +10,23 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.ResourceLocation;
 
 import com.google.common.collect.ImmutableSet;
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.gui.Focus;
 import mezz.jei.api.helpers.IModIdHelper;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.ingredients.IIngredientType;
+import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.config.IIngredientFilterConfig;
 import mezz.jei.gui.ingredients.IIngredientListElement;
 import mezz.jei.gui.ingredients.IIngredientListElementInfo;
+import mezz.jei.recipes.RecipeManager;
 import mezz.jei.util.Translator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,6 +128,22 @@ public class IngredientListElementInfo<V> implements IIngredientListElementInfo<
 		String displayNameLowercase = Translator.toLowercaseWithLocale(this.displayName);
 		V ingredient = element.getIngredient();
 		return IngredientInformation.getTooltipStrings(ingredient, ingredientRenderer, ImmutableSet.of(modId, modNameLowercase, displayNameLowercase, resourceId), config);
+	}
+
+	@Override
+	public final List<String> getCraftableString(RecipeManager recipeManager) {
+		V ingredient = element.getIngredient();
+		//use empty string to represent uncraftable items so they are unsearchable with any 'craftable' search string
+		String craftableString = "";
+		Focus<?> focus = new Focus<>(IFocus.Mode.OUTPUT, ingredient);
+		final List<IRecipeCategory> recipeCategories = recipeManager.getRecipeCategories(focus);
+		//List<ResourceLocation> recipeCategories =
+		if (!recipeCategories.isEmpty()) {
+			craftableString = Translator.toLowercaseWithLocale(this.getDisplayName());
+		}
+		List<String> collectionToHoldString = new ArrayList<>();
+		collectionToHoldString.add(craftableString);
+		return collectionToHoldString;
 	}
 
 	@Override

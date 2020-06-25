@@ -7,5 +7,6 @@ public class IngredientFilterConfigValues {
 	public SearchMode creativeTabSearchMode = SearchMode.REQUIRE_PREFIX;
 	public SearchMode colorSearchMode = SearchMode.REQUIRE_PREFIX;
 	public SearchMode resourceIdSearchMode = SearchMode.REQUIRE_PREFIX;
+	public SearchMode craftableSearchMode = SearchMode.REQUIRE_PREFIX;
 	public boolean searchAdvancedTooltips = false;
 }

@@ -36,6 +36,9 @@ public class TestIngredientFilterConfig implements IIngredientFilterConfig {
 	}
 
 	@Override
+	public SearchMode getCraftableSearchMode() { return SearchMode.ENABLED; }
+
+	@Override
 	public boolean getSearchAdvancedTooltips() {
 		return false;
 	}
